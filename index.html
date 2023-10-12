@@ -5,24 +5,28 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Paper</title>
     <link rel="stylesheet" href="./css/style.min.css" />
+    <style>
+      .page__number {
+        text-align: left;
+        font-size: 5px;
+      }
+    </style>
   </head>
   <body>
     <!-- id="sketchable"
         data-w-id="c025ab1d-a52d-b42c-6ccf-aef5777ba840"
         class="sketchable"
      -->
-    <div class="cover" >
-      <div class="book" >
-        <label for="page-1" class="book__page book__page--1" >
-          <div class="page__content sketchable" id="sketchable">페이지1</div>
+    <div class="cover">
+      <div class="book">
+        <label for="page-1" class="book__page book__page--1">
           <div class="page__number">1</div>
+          <div class="page__content sketchable" id="sketchable"></div>
         </label>
 
         <label for="page-2" class="book__page book__page--4">
-          <div class="page__content">
-            페이지3
-            <div class="page__number">3</div>
-          </div>
+          <div class="page__number">3</div>
+          <div class="page__content"></div>
         </label>
 
         <!-- Resets the page -->
@@ -31,11 +35,10 @@
         <!-- Goes to the second page -->
         <input type="radio" name="page" id="page-2" />
         <label class="book__page book__page--2">
-            <div class="page__number">2</div>
-            <canvas id="myCanvas" style="background-color: aliceblue" width="500" height="400"></canvas>
+          <div class="page__number">2</div>
+
           <div class="book__page-back">
-            <div class="page__content">
-            </div>
+            <div class="page__content"></div>
           </div>
         </label>
       </div>
@@ -62,49 +65,45 @@
       referrerpolicy="no-referrer"
     ></script>
 
-
     <script>
-        
+      // colors to cycle through
+      let COLOURS = ['#ef233c', '#A7EBCA', '#FFFFFF', '#d90429', '#868E80'];
+      let radius = 0;
 
-        // colors to cycle through
-        let COLOURS = ["#ef233c", "#A7EBCA", "#FFFFFF", "#d90429", "#868E80"];
-        let radius = 0;
+      Sketch.create({
+        container: document.getElementById('sketchable'),
+        autoclear: false,
+        retina: 'auto',
 
-        Sketch.create({
-            container: document.getElementById("sketchable"),
-            autoclear: false,
-            retina: "auto",
+        update: function () {
+          radius = 2 + abs(sin(this.millis * 0.003) * 50);
+        },
 
-            update: function() {
-                radius = 2 + abs(sin(this.millis * 0.003) * 50);
-            },
+        keydown: function () {
+          if (this.keys.C) this.clear();
+        },
 
-            keydown: function() {
-                if (this.keys.C)
-                    this.clear();
-            },
+        // click: function() {
+        //     if (this.click)
+        //         this.clear();
+        // },
 
-            // click: function() {
-            //     if (this.click)
-            //         this.clear();
-            // },
+        touchmove: function () {
+          for (var i = this.touches.length - 1, touch; i >= 0; i--) {
+            touch = this.touches[i];
 
-            touchmove: function() {
-                for (var i = this.touches.length - 1, touch; i >= 0; i--) {
-                    touch = this.touches[i];
+            this.lineCap = 'round';
+            this.lineJoin = 'round';
+            this.fillStyle = this.strokeStyle = COLOURS[i % COLOURS.length];
+            this.lineWidth = radius;
 
-                    this.lineCap = "round";
-                    this.lineJoin = "round";
-                    this.fillStyle = this.strokeStyle = COLOURS[i % COLOURS.length];
-                    this.lineWidth = radius;
-
-                    this.beginPath();
-                    this.moveTo(touch.ox, touch.oy);
-                    this.lineTo(touch.x, touch.y);
-                    this.stroke();
-                }
-            }
-        });
+            this.beginPath();
+            this.moveTo(touch.ox, touch.oy);
+            this.lineTo(touch.x, touch.y);
+            this.stroke();
+          }
+        },
+      });
     </script>
   </body>
 </html>
